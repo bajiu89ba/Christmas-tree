@@ -1,0 +1,7 @@
+{
+  "name": "Grand Luxury Tree",
+  "description": "A high-end, interactive 3D Christmas tree experience with gesture control, particle effects, and photo customization.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
