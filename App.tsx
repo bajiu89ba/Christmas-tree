@@ -191,13 +191,23 @@ export default function App() {
   const titleRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, initialLeft: 0, initialTop: 0 });
 
-  const startDrag = (e: React.MouseEvent) => {
+  const startDrag = (e: React.MouseEvent | React.TouchEvent) => {
       if(!titleRef.current) return;
+      
+      let clientX, clientY;
+      if ('touches' in e) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+      } else {
+          clientX = (e as React.MouseEvent).clientX;
+          clientY = (e as React.MouseEvent).clientY;
+      }
+
       const rect = titleRef.current.getBoundingClientRect();
       dragRef.current = { 
           isDragging: true, 
-          startX: e.clientX, 
-          startY: e.clientY, 
+          startX: clientX, 
+          startY: clientY, 
           initialLeft: rect.left, 
           initialTop: rect.top 
       };
@@ -205,10 +215,20 @@ export default function App() {
       titleRef.current.style.left = `${rect.left}px`;
       titleRef.current.style.top = `${rect.top}px`;
   };
-  const onDrag = (e: React.MouseEvent) => {
+
+  const onDrag = (e: React.MouseEvent | React.TouchEvent) => {
       if (dragRef.current.isDragging && titleRef.current) {
-          const dx = e.clientX - dragRef.current.startX;
-          const dy = e.clientY - dragRef.current.startY;
+          let clientX, clientY;
+          if ('touches' in e) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+          } else {
+            clientX = (e as React.MouseEvent).clientX;
+            clientY = (e as React.MouseEvent).clientY;
+          }
+
+          const dx = clientX - dragRef.current.startX;
+          const dy = clientY - dragRef.current.startY;
           titleRef.current.style.left = `${dragRef.current.initialLeft + dx}px`;
           titleRef.current.style.top = `${dragRef.current.initialTop + dy}px`;
       }
@@ -217,7 +237,13 @@ export default function App() {
 
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden" onMouseMove={onDrag} onMouseUp={stopDrag}>
+    <div 
+        className="relative w-screen h-screen bg-black overflow-hidden" 
+        onMouseMove={onDrag} 
+        onMouseUp={stopDrag}
+        onTouchMove={onDrag}
+        onTouchEnd={stopDrag}
+    >
       {/* 3D Container */}
       <div ref={containerRef} className="absolute inset-0 z-0" />
 
@@ -234,6 +260,7 @@ export default function App() {
       <div 
         ref={titleRef}
         onMouseDown={startDrag}
+        onTouchStart={startDrag}
         className="absolute top-[10%] left-1/2 -translate-x-1/2 z-50 cursor-move text-center select-none"
         style={titleStyle}
       >

@@ -41,6 +41,15 @@ const UIControls: React.FC<UIControlsProps> = ({
 
   const [showDelete, setShowDelete] = React.useState(false);
 
+  // Helper for touch events on buttons to prevent ghost clicks and scrolling
+  const touchProps = (x: number, y: number) => ({
+    onMouseDown: () => manualRotate(x, y),
+    onMouseUp: () => manualRotate(0, 0),
+    onMouseLeave: () => manualRotate(0, 0),
+    onTouchStart: (e: React.TouchEvent) => { e.preventDefault(); manualRotate(x, y); },
+    onTouchEnd: (e: React.TouchEvent) => { e.preventDefault(); manualRotate(0, 0); }
+  });
+
   return (
     <>
       <div className="absolute top-4 left-4 w-52 flex flex-col gap-2 z-20 origin-top-left transition-all duration-300">
@@ -111,13 +120,13 @@ const UIControls: React.FC<UIControlsProps> = ({
            
            <div className="grid grid-cols-3 gap-1 mt-2 border-t border-white/5 pt-2">
               <div></div>
-              <button onMouseDown={() => manualRotate(-1, 0)} onMouseUp={() => manualRotate(0, 0)} onMouseLeave={() => manualRotate(0, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1">▲</button>
+              <button {...touchProps(-1, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 select-none">▲</button>
               <div></div>
-              <button onMouseDown={() => manualRotate(0, -1)} onMouseUp={() => manualRotate(0, 0)} onMouseLeave={() => manualRotate(0, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1">◀</button>
-              <button onClick={() => manualRotate(0,0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 text-[8px]">●</button>
-              <button onMouseDown={() => manualRotate(0, 1)} onMouseUp={() => manualRotate(0, 0)} onMouseLeave={() => manualRotate(0, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1">▶</button>
+              <button {...touchProps(0, -1)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 select-none">◀</button>
+              <button onClick={() => manualRotate(0,0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 text-[8px] select-none">●</button>
+              <button {...touchProps(0, 1)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 select-none">▶</button>
               <div></div>
-              <button onMouseDown={() => manualRotate(1, 0)} onMouseUp={() => manualRotate(0, 0)} onMouseLeave={() => manualRotate(0, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1">▼</button>
+              <button {...touchProps(1, 0)} className="bg-white/5 hover:bg-yellow-500/20 text-yellow-500 rounded py-1 select-none">▼</button>
               <div></div>
            </div>
         </div>
